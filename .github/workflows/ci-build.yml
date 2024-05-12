@@ -24,6 +24,8 @@ jobs:
   ci-build:
 
     runs-on: ubuntu-latest
+    outputs:
+      nuget_version: ${{ steps.gitversion.outputs.nuGetVersionV2 }} 
 
     steps:
     - name: Checkout
@@ -122,7 +124,7 @@ jobs:
       
       - name: Deploy to QA Azure Container App
         run: |
-          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_QA }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_QA }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ steps.gitversion.outputs.nuGetVersionV2 }}
+          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_QA }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_QA }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ needs.build.outputs.nuget_version }}
 
   deploy-to-prod:
     needs: deploy-to-qa
@@ -137,4 +139,4 @@ jobs:
       
       - name: Deploy to Production Azure Container App
         run: |
-          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_PROD }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_PROD }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ steps.gitversion.outputs.nuGetVersionV2 }}
+          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_PROD }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_PROD }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ needs.build.outputs.nuget_version }}
