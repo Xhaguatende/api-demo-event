@@ -21,7 +21,7 @@ concurrency:
   group: ${{ github.ref }}
   
 jobs:
-  build:
+  ci-build:
 
     runs-on: ubuntu-latest
 
@@ -109,3 +109,32 @@ jobs:
       with:
         tag_name: v${{ steps.gitversion.outputs.nuGetVersionV2}}
         release_name: Release ${{ steps.gitversion.outputs.nuGetVersionV2}}
+
+  deploy-to-qa:
+    needs: ci-build
+    runs-on: ubuntu-latest
+    environment: QA
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Deploy to QA Azure Container App
+        run: |
+          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_QA }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_QA }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ steps.gitversion.outputs.nuGetVersionV2 }}
+
+  deploy-to-prod:
+    needs: deploy-to-qa
+    runs-on: ubuntu-latest
+    environment: PROD
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Deploy to Production Azure Container App
+        run: |
+          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_PROD }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_PROD }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ steps.gitversion.outputs.nuGetVersionV2 }}
