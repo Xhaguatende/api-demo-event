@@ -117,6 +117,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: QA
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Login to Azure
         uses: azure/login@v1
         with:
@@ -133,6 +136,9 @@ jobs:
     environment: PROD
     if: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Login to Azure
         uses: azure/login@v1
         with:
