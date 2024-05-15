@@ -114,7 +114,7 @@ jobs:
         release_name: Release ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
   deploy-to-qa:
-    needs: ci-build
+    needs: [ci-build]
     runs-on: ubuntu-latest
     environment: QA
     steps:
@@ -132,7 +132,7 @@ jobs:
           az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_QA }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_QA }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ needs.ci-build.outputs.nuget_version }}
 
   deploy-to-prod:
-    needs: deploy-to-qa
+    needs: [ci-build, deploy-to-qa]
     runs-on: ubuntu-latest
     environment: PROD
     steps:
@@ -151,4 +151,4 @@ jobs:
       
       - name: Deploy to Production Azure Container App
         run: |
-          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_PROD }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_PROD }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ needs['ci-build'].outputs.nuget_version }}
+          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_PROD }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_PROD }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ needs.ci-build.outputs.nuget_version }}
