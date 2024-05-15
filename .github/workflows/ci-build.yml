@@ -136,8 +136,8 @@ jobs:
     environment: PROD
     if: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Wait for deployment approval
+        run: echo Waiting for approval to deploy to PROD
 
       - name: Login to Azure
         uses: azure/login@v1
