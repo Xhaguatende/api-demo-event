@@ -5,6 +5,7 @@ on:
     branches: [ 'main' ]
     paths-ignore:
       - '**/README.md'
+  workflow_dispatch: # Enable manual triggering of the workflow
 
 env:
   DOTNET_VERSION: '8.0.x' 
@@ -117,9 +118,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: QA
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Login to Azure
         uses: azure/login@v1
         with:
@@ -138,6 +136,8 @@ jobs:
     steps:
       - name: Wait for deployment approval
         run: echo Waiting for approval to deploy to PROD
+        env:
+          DEPLOYMENT_APPROVAL_REQUIRED: true
 
       - name: Login to Azure
         uses: azure/login@v1
