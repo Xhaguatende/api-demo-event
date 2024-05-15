@@ -117,6 +117,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: QA
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Login to Azure
         uses: azure/login@v1
         with:
@@ -125,7 +128,7 @@ jobs:
       - name: Deploy to QA Azure Container App
         run: |
           echo Deploying version ${{ needs.build.outputs.nuget_version }}
-          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_QA }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_QA }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ needs.build.outputs.nuget_version }}
+          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_QA }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_QA }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ needs.ci-build.outputs.nuget_version }}
 
   deploy-to-prod:
     needs: deploy-to-qa
@@ -133,6 +136,9 @@ jobs:
     environment: PROD
     if: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Login to Azure
         uses: azure/login@v1
         with:
@@ -140,4 +146,4 @@ jobs:
       
       - name: Deploy to Production Azure Container App
         run: |
-          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_PROD }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_PROD }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ needs.build.outputs.nuget_version }}
+          az containerapp update --name ${{ secrets.AZURE_CONTAINERAPP_NAME_PROD }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_PROD }} --image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_HUB_REPOSITORY }}:${{ needs.ci-build.outputs.nuget_version }}
