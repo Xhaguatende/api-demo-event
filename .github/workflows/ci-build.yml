@@ -135,7 +135,6 @@ jobs:
     needs: deploy-to-qa
     runs-on: ubuntu-latest
     environment: PROD
-    if: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
