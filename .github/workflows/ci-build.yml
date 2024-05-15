@@ -26,7 +26,7 @@ jobs:
 
     runs-on: ubuntu-latest
     outputs:
-      nuget_version: ${{ steps.set_gitversion.outputs.nuget_version }}
+      nuget_version: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     steps:
     - name: Checkout
@@ -46,7 +46,7 @@ jobs:
         versionSpec: '5.x'
 
     - name: Setup GitVersion
-      id: set_gitversion
+      id: gitversion
       uses: gittools/actions/gitversion/execute@v0.9.7
 
     - name: Setup .NET
@@ -98,7 +98,7 @@ jobs:
         context: .
         file: docker/Dockerfile.Api
         push: true
-        tags: ${{secrets.DOCKERHUB_USERNAME}}/${{env.DOCKER_HUB_REPOSITORY}}:${{ steps.set_gitversion.outputs.nuget_version }}
+        tags: ${{secrets.DOCKERHUB_USERNAME}}/${{env.DOCKER_HUB_REPOSITORY}}:${{ steps.gitversion.outputs.nuGetVersionV2 }}
         labels: |
             org.opencontainers.image.title=ApiDemo.Api
             org.opencontainers.image.description=ApiDemo.Api
@@ -110,8 +110,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{ steps.set_gitversion.outputs.nuget_version }}
-        release_name: Release ${{ steps.set_gitversion.outputs.nuget_version }}
+        tag_name: v${{ steps.gitversion.outputs.nuGetVersionV2 }}
+        release_name: Release ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
   deploy-to-qa:
     needs: ci-build
