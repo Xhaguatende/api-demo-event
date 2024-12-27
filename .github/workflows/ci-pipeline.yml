@@ -1,0 +1,23 @@
+name: Build Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/README.md'
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  call-build-workflow:
+    uses: Xhaguatende/reusable-workflows/.github/workflows/dotnet-web-reusable.yml@main
+    with:
+      dotnet_version: "9.x"
+      sonar_cloud_organization: "xhaguatende-01"
+      sonar_cloud_project_key: "Xhaguatende_api-demo-event"
+      publish_project: "./ApiDemo.Api/ApiDemo.Api.csproj"
+      docker_file: "./docker/Dockerfile.Api"
+      docker_hub_repository: "api-demo-event"
+      docker_image_title: "My API Demo"
+      docker_image_description: "Docker image for My API Demo"
+    secrets: inherit 

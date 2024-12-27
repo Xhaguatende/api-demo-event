@@ -54,10 +54,17 @@ public class AccountsController : ApiDemoControllerBase
         return Ok(response.Value);
     }
 
+    /// <summary>
+    /// Signs out the user/account.
+    /// </summary>
+    /// <returns>
+    /// The <see cref="IActionResult"/>.
+    /// </returns>
     [HttpGet("sign-out")]
     public async Task<IActionResult> SignOutAsync()
     {
         // TODO: Implementation
+        await Task.Delay(100);
         return Ok();
     }
 }

@@ -9,9 +9,12 @@ namespace ApiDemo.Infrastructure.Repositories;
 using ApiDemo.Application.Repositories;
 using Application.Services;
 using Domain.Events;
+using Domain.Events.Exceptions;
 
 public class EventRepositoryMock : IEventRepository
 {
+    private const int MaxEvents = 15;
+
     private static readonly List<Event> Events = [];
 
     private readonly IApplicationContextService _applicationContextService;
@@ -57,6 +60,11 @@ public class EventRepositoryMock : IEventRepository
 
         if (existingEvent is null)
         {
+            if (Events.Count >= MaxEvents)
+            {
+                throw new MaxNumberEventsException();
+            }
+
             @event.CreatedAt = date;
             @event.CreatedBy = email;
 
@@ -64,7 +72,7 @@ public class EventRepositoryMock : IEventRepository
             return Task.FromResult(@event);
         }
 
-        existingEvent.Update( @event.Title, @event.Description, @event.StartDate);
+        existingEvent.Update(@event.Title, @event.Description, @event.StartDate);
 
         return Task.FromResult(existingEvent);
     }

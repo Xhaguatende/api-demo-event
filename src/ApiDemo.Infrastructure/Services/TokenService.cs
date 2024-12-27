@@ -8,7 +8,6 @@ namespace ApiDemo.Infrastructure.Services;
 
 using System;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using Application.Services;
 using Domain.Accounts.Entity;

@@ -6,7 +6,7 @@
 
 namespace ApiDemo.Application.Repositories;
 
-using ApiDemo.Domain.Events;
+using Domain.Events;
 
 public interface IEventRepository
 {
