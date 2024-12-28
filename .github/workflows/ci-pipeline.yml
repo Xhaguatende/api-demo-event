@@ -21,3 +21,14 @@ jobs:
       docker_image_title: "My API Demo"
       docker_image_description: "Docker image for My API Demo"
     secrets: inherit 
+
+  call-deploy-workflow:
+    needs: call-build-workflow
+    environment: QA
+    uses: Xhaguatende/reusable-workflows/.github/workflows/deploy-azure-containerapp.yml@main
+    with:
+      azure_containerapp_name: "ca-xhagua-api-dev-01"
+      azure_resource_group: "xhagua-core-dev-01"
+      docker_hub_repository: "api-demo-event"
+      fullSemVer: ${{ needs.call-build-workflow.outputs.fullSemVer }} 
+    secrets: inherit
