@@ -22,9 +22,17 @@ jobs:
       docker_image_description: "Docker image for My API Demo"
     secrets: inherit 
 
+  qa-approval:
+    needs: call-build-workflow 
+    runs-on: ubuntu-latest
+    environment: QA # Approval required
+    steps:
+      - name: Wait for Approval
+        run: echo "Deployment Approved. Proceeding to deployment."
+
+
   call-deploy-workflow:
-    needs: call-build-workflow
-    environment: QA
+    needs: qa-approval
     uses: Xhaguatende/reusable-workflows/.github/workflows/deploy-azure-containerapp.yml@main
     with:
       azure_containerapp_name: "ca-xhagua-api-dev-01"
